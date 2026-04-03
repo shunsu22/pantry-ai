@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: ソースコードを取得
@@ -40,13 +40,8 @@ jobs:
           push: true
           tags: ghcr.io/shunsu22/pantry-ai:latest
 
-      - name: Linux PC にデプロイ
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd ~/myapp
-            docker compose pull
-            docker compose up -d
+      - name: docker compose で再起動
+        run: |
+          cd ~/myapp
+          docker compose pull
+          docker compose up -d
