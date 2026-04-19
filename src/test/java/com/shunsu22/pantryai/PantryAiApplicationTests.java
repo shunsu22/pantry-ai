@@ -1,4 +1,4 @@
-package com.example.pantryai;
+package com.shunsu22.pantryai;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

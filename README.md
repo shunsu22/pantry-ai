@@ -4,7 +4,7 @@
 
 ## 技術スタック
 
-- Java 21 / Spring Boot 3
+- Java 21 / Spring Boot
 - PostgreSQL
 - Docker / docker compose
 - nginx

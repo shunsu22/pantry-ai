@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>食材一覧 - PantryAI</title>
+
+  <style>
+    .warning { background-color: #ffcccc; }
+    .caution { background-color: #fff3cc; }
+  </style>
+
+</head>
+<body>
+<h1>PantryAI</h1>
+<h2>食材一覧</h2>
+
+<a th:href="@{/ingredients/new}">食材を追加する</a>
+
+<form th:action="@{/logout}" method="post">
+  <button type="submit">ログアウト</button>
+</form>
+
+<table>
+  <thead>
+  <tr>
+    <th>食材名</th>
+    <th>在庫数</th>
+    <th>単位</th>
+    <th>購入日</th>
+    <th>経過日数</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="ingredient : ${ingredients}"
+      th:classappend="${daysSincePurchase[ingredient.id]} >= 8 ? 'warning' : (${daysSincePurchase[ingredient.id]} >= 4 ? 'caution' : '')">
+    <td th:text="${ingredient.name}"></td>
+    <td th:text="${ingredient.quantity}"></td>
+    <td th:text="${ingredient.unit}"></td>
+    <td th:text="${ingredient.purchasedAt}"></td>
+    <td th:text="${daysSincePurchase[ingredient.id]} + '日'"></td>
+    <td>
+      <a th:href="@{/ingredients/{id}/edit(id=${ingredient.id})}">編集</a>
+      <form th:action="@{/ingredients/{id}/delete(id=${ingredient.id})}" method="post" style="display:inline">
+        <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
