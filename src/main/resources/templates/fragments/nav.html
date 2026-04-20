@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<body>
+<nav th:fragment="nav">
+  <a th:href="@{/ingredients}">食材管理</a>
+  |
+  <a th:href="@{/recipes}">レシピ提案</a>
+  |
+  <form th:action="@{/logout}" method="post" style="display:inline">
+    <button type="submit">ログアウト</button>
+  </form>
+</nav>
+</body>
+</html>

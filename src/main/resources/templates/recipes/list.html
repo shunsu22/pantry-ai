@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>レシピ提案 - PantryAI</title>
+</head>
+<body>
+<h1>PantryAI</h1>
+<h2>AIレシピ提案</h2>
+
+<a th:href="@{/ingredients}">食材一覧へ</a>
+
+<div th:if="${error}">
+  <p th:text="${error}"></p>
+</div>
+
+<form th:action="@{/recipes/suggest}" method="post">
+  <button type="submit">登録食材からレシピを提案する</button>
+</form>
+
+<div th:if="${suggestion}">
+  <h3>AIからの提案</h3>
+  <pre th:text="${suggestion}"></pre>
+  <form th:action="@{/recipes/save}" method="post">
+    <input type="hidden" name="description" th:value="${suggestion}"/>
+    <div>
+      <label for="name">レシピ名</label>
+      <input type="text" id="name" name="name" required placeholder="レシピ名を入力してください"/>
+    </div>
+    <button type="submit">このレシピを保存する</button>
+  </form>
+</div>
+
+<h3>保存済みレシピ</h3>
+<div th:if="${#lists.isEmpty(recipes)}">
+  <p>保存済みのレシピはありません</p>
+</div>
+<div th:each="recipe : ${recipes}">
+  <h4 th:text="${recipe.name}"></h4>
+  <pre th:text="${recipe.description}"></pre>
+  <form th:action="@{/recipes/{id}/favorite(id=${recipe.id})}" method="post" style="display:inline">
+    <button type="submit" th:text="${recipe.isFavorite} ? 'お気に入り解除' : 'お気に入り登録'"></button>
+  </form>
+  <form th:action="@{/recipes/{id}/delete(id=${recipe.id})}" method="post" style="display:inline">
+    <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
+  </form>
+</div>
+
+</body>
+</html>
