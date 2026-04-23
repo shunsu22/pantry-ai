@@ -1,54 +1,47 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>食材一覧 - PantryAI</title>
+<head th:replace="~{fragments/head :: head('食材一覧')}"></head>
+<body class="bg-gray-50 min-h-screen">
+<div th:replace="~{fragments/nav :: nav}"></div>
 
-  <style>
-    .warning { background-color: #ffcccc; }
-    .caution { background-color: #fff3cc; }
-  </style>
+<div class="container mx-auto px-6 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">食材一覧</h2>
+    <a th:href="@{/ingredients/new}"
+       class="bg-green-600 text-white px-4 py-2 rounded font-medium hover:bg-green-700 transition">
+      食材を追加する
+    </a>
+  </div>
 
-</head>
-<body>
-<nav th:replace="~{fragments/nav :: nav}"></nav>
-<h1>PantryAI</h1>
-<h2>食材一覧</h2>
+  <div th:if="${#lists.isEmpty(ingredients)}"
+       class="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+    食材が登録されていません
+  </div>
 
-<a th:href="@{/ingredients/new}">食材を追加する</a>
-
-<form th:action="@{/logout}" method="post">
-  <button type="submit">ログアウト</button>
-</form>
-
-<table>
-  <thead>
-  <tr>
-    <th>食材名</th>
-    <th>在庫数</th>
-    <th>単位</th>
-    <th>購入日</th>
-    <th>経過日数</th>
-    <th>操作</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="ingredient : ${ingredients}"
-      th:classappend="${daysSincePurchase[ingredient.id]} >= 8 ? 'warning' : (${daysSincePurchase[ingredient.id]} >= 4 ? 'caution' : '')">
-    <td th:text="${ingredient.name}"></td>
-    <td th:text="${ingredient.quantity}"></td>
-    <td th:text="${ingredient.unit}"></td>
-    <td th:text="${ingredient.purchasedAt}"></td>
-    <td th:text="${daysSincePurchase[ingredient.id]} + '日'"></td>
-    <td>
-      <a th:href="@{/ingredients/{id}/edit(id=${ingredient.id})}">編集</a>
-      <form th:action="@{/ingredients/{id}/delete(id=${ingredient.id})}" method="post" style="display:inline">
-        <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
-      </form>
-    </td>
-  </tr>
-  </tbody>
-</table>
-
-</body>
-</html>
+  <div class="bg-white rounded-lg shadow overflow-hidden" th:unless="${#lists.isEmpty(ingredients)}">
+    <table class="w-full">
+      <thead class="bg-gray-50 border-b">
+      <tr>
+        <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">食材名</th>
+        <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">在庫数</th>
+        <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">単位</th>
+        <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">購入日</th>
+        <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">経過日数</th>
+        <th class="px-6 py-3 text-left text-sm font-medium text-gray-600">操作</th>
+      </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+      <tr th:each="ingredient : ${ingredients}"
+          th:classappend="${daysSincePurchase[ingredient.id]} >= 8 ? 'bg-red-50' : (${daysSincePurchase[ingredient.id]} >= 4 ? 'bg-yellow-50' : '')">
+        <td class="px-6 py-4 text-sm text-gray-800" th:text="${ingredient.name}"></td>
+        <td class="px-6 py-4 text-sm text-gray-800" th:text="${ingredient.quantity}"></td>
+        <td class="px-6 py-4 text-sm text-gray-800" th:text="${ingredient.unit}"></td>
+        <td class="px-6 py-4 text-sm text-gray-800" th:text="${ingredient.purchasedAt}"></td>
+        <td class="px-6 py-4 text-sm">
+                            <span th:text="${daysSincePurchase[ingredient.id]} + '日'"
+                                  th:classappend="${daysSincePurchase[ingredient.id]} >= 8 ? 'text-red-600 font-medium' : (${daysSincePurchase[ingredient.id]} >= 4 ? 'text-yellow-600 font-medium' : 'text-gray-800')">
+                            </span>
+        </td>
+        <td class="px-6 py-4 text-sm flex gap-2">
+          <a th:href="@{/ingredients/{id}/edit(id=${ingredient.id})}"
+             class="text-blue-600 hover:underline">編集</a>

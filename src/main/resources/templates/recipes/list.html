@@ -1,50 +1,79 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>レシピ提案 - PantryAI</title>
-</head>
-<body>
-<h1>PantryAI</h1>
-<h2>AIレシピ提案</h2>
+<head th:replace="~{fragments/head :: head('レシピ提案')}"></head>
+<body class="bg-gray-50 min-h-screen">
+<div th:replace="~{fragments/nav :: nav}"></div>
 
-<a th:href="@{/ingredients}">食材一覧へ</a>
+<div class="container mx-auto px-6 py-8">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">AIレシピ提案</h2>
 
-<div th:if="${error}">
-  <p th:text="${error}"></p>
-</div>
+  <div th:if="${error}" class="bg-red-50 text-red-600 px-4 py-3 rounded mb-4 text-sm">
+    <p th:text="${error}"></p>
+  </div>
 
-<form th:action="@{/recipes/suggest}" method="post">
-  <button type="submit">登録食材からレシピを提案する</button>
-</form>
+  <div class="bg-white rounded-lg shadow p-6 mb-8">
+    <p class="text-gray-600 mb-4">登録されている食材をもとにAIがレシピを提案します。</p>
+    <form th:action="@{/recipes/suggest}" method="post">
+      <button type="submit"
+              class="bg-green-600 text-white px-6 py-2 rounded font-medium hover:bg-green-700 transition">
+        レシピを提案してもらう
+      </button>
+    </form>
+  </div>
 
-<div th:if="${suggestion}">
-  <h3>AIからの提案</h3>
-  <pre th:text="${suggestion}"></pre>
-  <form th:action="@{/recipes/save}" method="post">
-    <input type="hidden" name="description" th:value="${suggestion}"/>
-    <div>
-      <label for="name">レシピ名</label>
-      <input type="text" id="name" name="name" required placeholder="レシピ名を入力してください"/>
+  <div th:if="${suggestion}" class="bg-white rounded-lg shadow p-6 mb-8">
+    <h3 class="text-lg font-bold text-gray-800 mb-4">AIからの提案</h3>
+    <pre class="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded mb-4"
+         th:text="${suggestion}"></pre>
+    <form th:action="@{/recipes/save}" method="post" class="space-y-3">
+      <input type="hidden" name="description" th:value="${suggestion}"/>
+      <div>
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">レシピ名</label>
+        <input type="text" id="name" name="name" required
+               placeholder="レシピ名を入力してください"
+               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"/>
+      </div>
+      <button type="submit"
+              class="bg-blue-600 text-white px-6 py-2 rounded font-medium hover:bg-blue-700 transition">
+        このレシピを保存する
+      </button>
+    </form>
+  </div>
+
+  <h3 class="text-xl font-bold text-gray-800 mb-4">保存済みレシピ</h3>
+
+  <div th:if="${#lists.isEmpty(recipes)}"
+       class="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+    保存済みのレシピはありません
+  </div>
+
+  <div class="space-y-4" th:unless="${#lists.isEmpty(recipes)}">
+    <div th:each="recipe : ${recipes}"
+         class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center justify-between mb-3">
+        <h4 class="text-lg font-bold text-gray-800" th:text="${recipe.name}"></h4>
+        <span th:if="${recipe.isFavorite}"
+              class="text-yellow-500 text-sm font-medium">お気に入り</span>
+      </div>
+      <pre class="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded mb-4"
+           th:text="${recipe.description}"></pre>
+      <div class="flex gap-3">
+        <form th:action="@{/recipes/{id}/favorite(id=${recipe.id})}" method="post">
+          <button type="submit"
+                  th:text="${recipe.isFavorite} ? 'お気に入り解除' : 'お気に入り登録'"
+                  class="text-sm border border-yellow-400 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-50 transition">
+          </button>
+        </form>
+        <form th:action="@{/recipes/{id}/delete(id=${recipe.id})}" method="post">
+          <button type="submit"
+                  onclick="return confirm('本当に削除しますか？')"
+                  class="text-sm border border-red-400 text-red-600 px-3 py-1 rounded hover:bg-red-50 transition">
+            削除
+          </button>
+        </form>
+      </div>
     </div>
-    <button type="submit">このレシピを保存する</button>
-  </form>
+  </div>
 </div>
-
-<h3>保存済みレシピ</h3>
-<div th:if="${#lists.isEmpty(recipes)}">
-  <p>保存済みのレシピはありません</p>
-</div>
-<div th:each="recipe : ${recipes}">
-  <h4 th:text="${recipe.name}"></h4>
-  <pre th:text="${recipe.description}"></pre>
-  <form th:action="@{/recipes/{id}/favorite(id=${recipe.id})}" method="post" style="display:inline">
-    <button type="submit" th:text="${recipe.isFavorite} ? 'お気に入り解除' : 'お気に入り登録'"></button>
-  </form>
-  <form th:action="@{/recipes/{id}/delete(id=${recipe.id})}" method="post" style="display:inline">
-    <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
-  </form>
-</div>
-
 </body>
 </html>

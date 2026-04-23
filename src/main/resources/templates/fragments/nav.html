@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <body>
-<nav th:fragment="nav">
-  <a th:href="@{/ingredients}">食材管理</a>
-  |
-  <a th:href="@{/recipes}">レシピ提案</a>
-  |
-  <form th:action="@{/logout}" method="post" style="display:inline">
-    <button type="submit">ログアウト</button>
-  </form>
+<nav th:fragment="nav" class="bg-green-600 text-white px-6 py-4 flex items-center justify-between shadow-md">
+  <span class="text-xl font-bold">PantryAI</span>
+  <div class="flex gap-6 items-center">
+    <a th:href="@{/ingredients}" class="hover:underline">食材管理</a>
+    <a th:href="@{/recipes}" class="hover:underline">レシピ提案</a>
+    <form th:action="@{/logout}" method="post">
+      <button type="submit"
+              class="bg-white text-green-600 px-3 py-1 rounded font-medium hover:bg-gray-100 transition">
+        ログアウト
+      </button>
+    </form>
+  </div>
 </nav>
 </body>
 </html>
